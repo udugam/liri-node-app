@@ -11,8 +11,9 @@ var spotifyModule = require('node-spotify-api')
 var twitter = new twitterModule(keys.twitter)
 // var spotify = new spotifyModule(keys.spotify)
 
-twitter.get('favorites/list', function(error, tweets, response) {
-    if(!error)  {
+var params = {screen_name: 'Leo60747218'};
+twitter.get('statuses/user_timeline', params, function(error, tweets, response) {
+    if (!error) {
         console.log(tweets);
-    };
-  });
+    }
+});
