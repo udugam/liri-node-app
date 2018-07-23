@@ -1,6 +1,7 @@
 //Importing environment variables and api keys
 require('dotenv').config();
 var keys = require('./keys.js');
+var fs = require('fs')
 
 //Importing node modules
 var request = require('request')
@@ -64,6 +65,14 @@ switch(process.argv[2]) {
                 console.log('Actors: ', JSON.parse(body).Actors)
             }
         })
+        break
+
+    case 'do-what-it-says':
+        fs.readFile('random.txt','utf8',function(error,data) {
+            var dataArray = data.split(',')
+            console.log(dataArray[0]);
+        })
+        break
     }
 
 
