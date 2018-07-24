@@ -32,6 +32,7 @@ var commands = {
             if (!error) {
                 tweets.forEach(function(element) {
                     console.log(element.text);
+                    commands.addToLog(element.text)
                 }) 
             }
         });
@@ -54,6 +55,11 @@ var commands = {
                 console.log('Plot: ', JSON.parse(body).Plot)
                 console.log('Actors: ', JSON.parse(body).Actors)
             }
+        })
+    },
+    addToLog: function(data) {
+        fs.appendFile('log.txt', data,function(err) {
+            console.log(err)
         })
     }
 }
