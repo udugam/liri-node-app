@@ -13,22 +13,8 @@ var twitter = new twitterModule(keys.twitter)
 var spotify = new spotifyModule(keys.spotify)
 
 
-switch(process.argv[2]) {
-    case 'my-tweets':
-        twitter.get('statuses/user_timeline', {screen_name: 'Leo60747218'}, function(error, tweets, response) {
-            if (!error) {
-                tweets.forEach(function(element) {
-                    console.log(element.text);
-                }) 
-            }
-        });
-        break
-    
-    case 'spotify-this-song':
-        //Take the process.argv array, remove the first three elements and a make a string of the rest to account for spaces in the song name
-        var commandArray = process.argv
-        var songName = commandArray.slice(3).join(' ');
-    
+var commands = {
+    spotifyThisSong: function(songName) {
         spotify.search({ type: 'track', query: songName, limit:1 }, function(err, data) {
             if (!err) {
                 var resultsList = data.tracks.items
@@ -40,13 +26,17 @@ switch(process.argv[2]) {
                 })
             }
         });
-        break
-    
-    case 'movie-this':
-        //Take the process.argv array, remove the first three elements and a make a string of the rest to account for spaces in the movie name
-        var commandArray = process.argv
-        var movieName = commandArray.slice(3).join(' ');
-
+    },
+    myTweets: function() {
+        twitter.get('statuses/user_timeline', {screen_name: 'Leo60747218'}, function(error, tweets, response) {
+            if (!error) {
+                tweets.forEach(function(element) {
+                    console.log(element.text);
+                }) 
+            }
+        });
+    },
+    movieThis: function(movieName) {
         //Declare and build query url request to the OMDB API
         var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
         
@@ -65,14 +55,52 @@ switch(process.argv[2]) {
                 console.log('Actors: ', JSON.parse(body).Actors)
             }
         })
+    }
+}
+
+
+switch(process.argv[2]) {
+    case 'my-tweets':
+        commands.myTweets()
+        break
+    
+    case 'spotify-this-song':
+        //Take the process.argv array, remove the first three elements and a make a string of the rest to account for spaces in the song name
+        var commandArray = process.argv
+        var songName = commandArray.slice(3).join(' ');
+    
+        commands.spotifyThisSong(songName);
+        break
+    
+    case 'movie-this':
+        //Take the process.argv array, remove the first three elements and a make a string of the rest to account for spaces in the movie name
+        var commandArray = process.argv
+        var movieName = commandArray.slice(3).join(' ');
+
+        commands.movieThis(movieName);
         break
 
     case 'do-what-it-says':
         fs.readFile('random.txt','utf8',function(error,data) {
             var dataArray = data.split(',')
-            console.log(dataArray[0]);
+            switch(dataArray[0]) {
+                case 'spotify-this-song':
+                    commands.spotifyThisSong(dataArray[1]);
+                    break
+                
+                case 'my-tweets':
+                    commands.myTweets();
+                    break
+
+                case 'movie-this':
+                    commands.movieThis([dataArray[1]]);
+                    break
+            }
         })
         break
-    }
+}
+
+
+
 
 
