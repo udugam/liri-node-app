@@ -19,10 +19,12 @@ var commands = {
             if (!err) {
                 var resultsList = data.tracks.items
                 resultsList.forEach( function(element) {
-                    console.log('Artist(s): ', element.album.artists[0].name); 
-                    console.log('Song Name: ', element.name);
-                    console.log('Preview Link: ', element.external_urls.spotify);                     
-                    console.log('Album: ', element.album.name);                                     
+                    var songDetails =   'Artist(s): '+ element.album.artists[0].name + "\n" +  
+                                        'Song Name: '+ element.name + "\n" +
+                                        'Preview Link: ' + element.external_urls.spotify + "\n" +                 
+                                        'Album: ' + element.album.name + "\n\r"                                          
+                    console.log(songDetails)
+                    commands.addToLog(songDetails)                                     
                 })
             }
         });
@@ -31,8 +33,8 @@ var commands = {
         twitter.get('statuses/user_timeline', {screen_name: 'Leo60747218'}, function(error, tweets, response) {
             if (!error) {
                 tweets.forEach(function(element) {
-                    console.log(element.text);
-                    commands.addToLog(element.text)
+                    console.log(element.text + ' (' + element.created_at +')');
+                    commands.addToLog(element.text + ' (' + element.created_at + ')')
                 }) 
             }
         });
@@ -46,20 +48,22 @@ var commands = {
             // If the request is successful
             if(!error && response.statusCode=='200') {
                 // Then log the Release Year for the movie
-                console.log('Title: ', JSON.parse(body).Title)
-                console.log('Year: ', JSON.parse(body).Year)
-                console.log('IMDB Rating: ', JSON.parse(body).imdbRating)
-                console.log('Roten Tomatoes Rating: ', JSON.parse(body).Ratings[1].Value)
-                console.log('Country: ', JSON.parse(body).Country)
-                console.log('Language: ', JSON.parse(body).Language)
-                console.log('Plot: ', JSON.parse(body).Plot)
-                console.log('Actors: ', JSON.parse(body).Actors)
+                var movieDetails =  'Title: ' + JSON.parse(body).Title + "\n" +
+                                    'Year: ' + JSON.parse(body).Year + "\n" +
+                                    'IMDB Rating: ' + JSON.parse(body).imdbRating + "\n" +
+                                    'Roten Tomatoes Rating: ' + JSON.parse(body).Ratings[1].Value + "\n" +
+                                    'Country: ' + JSON.parse(body).Country + "\n" +
+                                    'Language: ' + JSON.parse(body).Language + "\n" +
+                                    'Plot: ' + JSON.parse(body).Plot + "\n" +
+                                    'Actors: ' + JSON.parse(body).Actors + "\n\r"
+                console.log(movieDetails)
+                commands.addToLog(movieDetails)
             }
         })
     },
     addToLog: function(data) {
-        fs.appendFile('log.txt', data,function(err) {
-            console.log(err)
+        fs.appendFile('log.txt', data + "\n",function(err) {
+            err ? console.log(err) : null
         })
     }
 }
